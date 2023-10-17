@@ -1,3 +1,5 @@
+import type { Job } from "./job";
+
 /**
  * 必要経験点リスト
  *
@@ -35,6 +37,7 @@ export type Unit = {
   actionPoints: number;
   /** いわゆる装甲 or シールド。0以上の整数。lifeの代わりに減少する一時的なlife。基本的には次ターン開始前に0になる。 */
   armorPoints: number;
+  jobId: Job["id"];
   /**
    * ユニットレベル
    *
@@ -53,9 +56,22 @@ export type Unit = {
   occupationKind: "main" | "sub";
 };
 
-export const getMaxLifePoints = (params: { unit: Unit }): number =>
+export const computeMaxLifePoints = (params: { unit: Unit }): number =>
   10 + params.unit.abilityValues.strength + params.unit.level;
 
-export const getActionPointsAtStartOfTurn = (): number => 3;
+export const computeActionPointsAtStartOfTurn = (params: {
+  unit: Unit;
+}): number => 3;
 
-export const getArmorPointsAtStartOfTurn = (): number => 0;
+export const computeArmorPointsAtStartOfTurn = (params: {
+  unit: Unit;
+}): number => 0;
+
+export const computeAttackPoints = (params: { unit: Unit }): number => 1;
+
+export const computeDefencePoints = (params: { unit: Unit }): number => 1;
+
+export const computeMagicalAttackPoints = (params: { unit: Unit }): number => 1;
+
+export const computeMagicalDefencePoints = (params: { unit: Unit }): number =>
+  1;

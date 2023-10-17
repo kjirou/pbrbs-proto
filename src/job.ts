@@ -8,11 +8,19 @@
  * 例えば、「戦士はSTRに対しての生命力の伸びが倍になる」というような調整はNG、「戦士はSTRに対して生命力の伸びが倍になるパッシブスキルを持つ」ならOK。
  */
 export type Job = {
+  attackPointsModification: number;
+  defencePointsModification: number;
+  magicalAttackPointsModification: number;
+  magicalDefencePointsModification: number;
   id: "fighter";
 };
 
 export const jobs = [
   {
     id: "fighter",
+    attackPointsModification: 1,
+    defencePointsModification: 1,
+    magicalAttackPointsModification: 0,
+    magicalDefencePointsModification: 0,
   },
 ] as const satisfies Readonly<Array<Job>>;
