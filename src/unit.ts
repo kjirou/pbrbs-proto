@@ -7,19 +7,21 @@ import type { Job } from "./job";
  */
 export type Unit = {
   /**
-   * 能力値群
+   * 素早さ・器用さを表す能力値
    *
-   * それぞれ 1 以上の整数。
+   * 1以上の整数。略称は AGI。
    */
-  abilityValues: {
-    agility: number;
-    intelligence: number;
-    strength: number;
-  };
+  agility: number;
   /** いわゆるAP。0以上の整数。 */
   actionPoints: number;
   /** いわゆる装甲 or シールド。0以上の整数。lifeの代わりに減少する一時的なlife。基本的には次ターン開始前に0になる。 */
   armorPoints: number;
+  /**
+   * 頭の良さ・魔力の高さを表す能力値
+   *
+   * 1以上の整数。略称は INT。
+   */
+  intelligence: number;
   jobId: Job["id"];
   /**
    * ユニットレベル
@@ -50,10 +52,16 @@ export type Unit = {
    * 同パックのスキルを1つ獲得する度に2倍,3倍...となる。
    */
   skillPoints: number;
+  /**
+   * 強さ・頑丈さを表す能力値
+   *
+   * 1以上の整数。略称は STR。
+   */
+  strength: number;
 };
 
 export const computeMaxLifePoints = (params: { unit: Unit }): number =>
-  10 + params.unit.abilityValues.strength + params.unit.level;
+  10 + params.unit.strength + params.unit.level;
 
 export const computeActionPointsAtStartOfTurn = (params: {
   unit: Unit;
