@@ -8,8 +8,31 @@ type TargettableArea =
   | "around"
   | "crossShaped"
   | "frontEnemyLane"
-  | "frontThreeEnemyLanes";
+  | "frontThreeEnemyLanes"
+  | "ownCell"
+  | "ownObject";
 
+/**
+ * 対象選択
+ *
+ * 対象選択を要するときのフロー(targetKindが"cell"または"object かつ targettableAreaが"ownCell"または"ownObject"ではない):
+ * - ユーザーがスキルをタップ
+ * - "cell"なら候補のセルが強調表示、"object"なら候補のオブジェクトが強調表示
+ * - 強調表示されている箇所をユーザーがタップ
+ * - セルまたはオブジェクトの対象選択情報が格納され、効果範囲の処理に移る
+ *
+ * 対象選択を要しないときのフロー(targetKindが"none"):
+ * - ユーザーがスキルをタップ
+ * - 暗黙的に自身のセルを対象選択情報として格納し、効果範囲の処理に移る
+ *   - この対象選択情報は効果範囲処理時に使わないこともある
+ * - 対象選択情報が不要な効果範囲の処理に移る
+ *
+ * 対象選択が自身であるため省略するときのフロー(targetKindが"cell"または"object かつ targettableAreaが"ownCell"または"ownObject"である):
+ * - ユーザーがスキルをタップ
+ * - "ownCell"または"ownObject"の設定によりセルまたはオブジェクトの対象選択情報が格納され、効果範囲の処理に移る
+ *
+ * TODO: 効果範囲が事前にわからない。タップ数を増やすのはNGなので、効果範囲決定時もタップを要する別操作モードにすぐ切り替えられるようにするのが良さそう。
+ */
 type Targetting = Readonly<
   | {
       targetKind: "cell" | "object";
@@ -17,13 +40,7 @@ type Targetting = Readonly<
       // TODO: enemy側が選択するときや、こちらで自動決定する時の設定
     }
   | {
-      /**
-       * 自分自身を EffectArea 計算の始点にするという振る舞いは、"none" も "own~" も同じになる。
-       * 対象選択が不要になるという点において、"cell" や "object" との違いがある。
-       * 自分自身やそのセルを対象にする時、厳密には targettableArea から一つを選んでいることになるが、そちらの構造に合わせるより選択が不要になるという構造に合わせた方がたぶん良さそう。
-       *
-       */
-      targetKind: "none" | "ownCell" | "ownObject";
+      targetKind: "none";
     }
 >;
 
