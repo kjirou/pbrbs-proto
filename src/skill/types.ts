@@ -33,32 +33,61 @@ type TargettableArea =
  *
  * TODO: 効果範囲が事前にわからない。タップ数を増やすのはNGなので、効果範囲決定時もタップを要する別操作モードにすぐ切り替えられるようにするのが良さそう。
  */
-type Targetting = Readonly<
-  | {
-      targetKind: "cell" | "object";
-      targettableArea: TargettableArea;
-      // TODO: enemy側が選択するときや、こちらで自動決定する時の設定
-    }
-  | {
-      targetKind: "none";
-    }
->;
+type Targetting = Readonly<{
+  targetKind: "cell" | "object";
+  targettableArea: TargettableArea;
+  // TODO: enemy側が選択するときや、こちらで自動決定する時の設定
+}>;
 
-type EffectArea =
-  | "allOnAllySide"
-  | "allOnEnemySide"
+type UserPositionRelativeEffectArea =
   | "around"
+  | "breath"
   | "crossShaped"
   | "frontEnemyLane"
-  | "frontTwoEnemyLanes"
   | "frontThreeEnemyLanes"
-  | "self";
+  | "frontTwoEnemyLanes"
+  | "powerfulBreath"
+  | "within0"
+  | "within1"
+  | "within2"
+  | "within3"
+  | "within4"
+  | "within5";
 
+type UserSideRelativeEffectArea =
+  | "allOnAllySide"
+  | "allOnEnemySide"
+  | "frontLineOnEnemySide"
+  | "frontTwoLinesOnEnemySide";
+
+type EffectArea =
+  | {
+      kind: "targetting";
+      targetting: Targetting;
+      // TODO:
+      //area
+    }
+  | {
+      kind: "userPositionRelative";
+      area: UserPositionRelativeEffectArea;
+    }
+  | {
+      kind: "userSideRelative";
+      area: UserSideRelativeEffectArea;
+    };
+
+// TODO: 移動・能動攻撃・通常攻撃・バフデバフ・範囲攻撃数種類
 type Effect = {};
 
-type Impact = Readonly<{}>;
+type Impact = Readonly<{
+  area: EffectArea;
+  effect: Effect;
+}>;
 
-type Action = Readonly<{}>;
+type Action = Readonly<{
+  impacts: Array<Impact>;
+  targetting: Targetting;
+}>;
 
 export type Skill = Readonly<
   {
