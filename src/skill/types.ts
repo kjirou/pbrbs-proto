@@ -9,29 +9,11 @@ type TargettableArea =
   | "crossShaped"
   | "frontEnemyLane"
   | "frontThreeEnemyLanes"
-  | "ownCell"
-  | "ownObject";
+  | "self";
 
 /**
- * 対象選択
- *
- * 対象選択を要するときのフロー(targetKindが"cell"または"object かつ targettableAreaが"ownCell"または"ownObject"ではない):
- * - ユーザーがスキルをタップ
- * - "cell"なら候補のセルが強調表示、"object"なら候補のオブジェクトが強調表示
- * - 強調表示されている箇所をユーザーがタップ
- * - セルまたはオブジェクトの対象選択情報が格納され、効果範囲の処理に移る
- *
- * 対象選択を要しないときのフロー(targetKindが"none"):
- * - ユーザーがスキルをタップ
- * - 暗黙的に自身のセルを対象選択情報として格納し、効果範囲の処理に移る
- *   - この対象選択情報は効果範囲処理時に使わないこともある
- * - 対象選択情報が不要な効果範囲の処理に移る
- *
- * 対象選択が自身であるため省略するときのフロー(targetKindが"cell"または"object かつ targettableAreaが"ownCell"または"ownObject"である):
- * - ユーザーがスキルをタップ
- * - "ownCell"または"ownObject"の設定によりセルまたはオブジェクトの対象選択情報が格納され、効果範囲の処理に移る
- *
- * TODO: 効果範囲が事前にわからない。タップ数を増やすのはNGなので、効果範囲決定時もタップを要する別操作モードにすぐ切り替えられるようにするのが良さそう。
+ * - targetKind="cell" & targettableArea="self" は、userPositionRelative で表現するので使わない予定。 // TODO: 型にする。
+ * - targetKind="object" & targettableArea="self" は、操作フロー上は対象選択を省略する。
  */
 type Targetting = Readonly<{
   targetKind: "cell" | "object";
@@ -60,7 +42,36 @@ type UserSideRelativeEffectArea =
   | "frontLineOnEnemySide"
   | "frontTwoLinesOnEnemySide";
 
-type EffectArea =
+/**
+ * 効果範囲と対象選択
+ *
+ * ---
+ *
+ * 要件:
+ *
+ * - 対象選択が必要な単体攻撃で敵を攻撃する。
+ * - 中心の選択が必要な範囲攻撃で敵を攻撃する。
+ * - 中心の選択が必要ではない範囲攻撃で敵を攻撃する。
+ * - 行動者自身を対象とする効果を発動する。
+ * - 行動者自身を中心とした範囲を対象とする効果を発動する。
+ *
+ * ---
+ *
+ * 操作フロー例:
+ *
+ * 対象選択が必要な単体攻撃で敵を攻撃する:
+ * - ユーザーがスキルをタップ
+ * - 選択可能な敵が強調表示
+ * - 選択したい敵をユーザーがタップ
+ * - その敵に効果が発生する
+ *
+ * 中心の選択が必要ではない範囲攻撃で敵を攻撃する:
+ * - ユーザーがスキルをタップ
+ * - そのセルを中心とした範囲内の敵に効果が発生する
+ *
+ * TODO: 効果範囲が事前にわからない。タップ数を増やすのはNGなので、効果範囲決定時もタップを要する別操作モードにすぐ切り替えられるようにするのが良さそう。
+ */
+type EffectArea = Readonly<
   | {
       kind: "targetting";
       targetting: Targetting;
@@ -74,7 +85,8 @@ type EffectArea =
   | {
       kind: "userSideRelative";
       area: UserSideRelativeEffectArea;
-    };
+    }
+>;
 
 // TODO: 移動・能動攻撃・通常攻撃・バフデバフ・範囲攻撃数種類
 type Effect = {};
